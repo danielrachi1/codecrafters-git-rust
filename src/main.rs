@@ -1,5 +1,6 @@
 use std::fs;
 
+mod cat_file;
 mod cli;
 
 use clap::Parser;
@@ -17,16 +18,17 @@ fn main() {
         }
         Commands::CatFile(args) => {
             let mode = &args.mode;
-            let hash = &args.hash;
+
+            let (object_type, size, content) = cat_file::run(&args.hash);
 
             if mode.show_type {
-                println!("-t: {hash}");
+                print!("{object_type}");
             } else if mode.size {
-                println!("-s: {hash}");
+                print!("{size}");
             } else if mode.print {
-                println!("-p: {hash}");
+                print!("{content}");
             } else if mode.exists {
-                println!("-e: {hash}");
+                todo!();
             } else {
                 unreachable!() // clap guarantees exactly one is true
             }
