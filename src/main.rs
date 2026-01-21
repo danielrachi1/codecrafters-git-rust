@@ -2,6 +2,7 @@ use std::fs;
 
 mod cat_file;
 mod cli;
+mod hash_object;
 
 use clap::Parser;
 use cli::{Cli, Commands};
@@ -42,10 +43,15 @@ fn main() {
                 panic!("Must provide file path or --stdin")
             };
 
+            let store = hash_object::store(&content);
+            let hash = hash_object::hash(&store);
+
             if args.write {
-                println!("will hash, show in stdout, and write the file!")
+                let compressed_data = hash_object::compress(&store);
+                hash_object::write(&hash, compressed_data);
+                print!("{hash}")
             } else {
-                println!("will hash and show in stdout!")
+                print!("{hash}")
             }
         }
     }
