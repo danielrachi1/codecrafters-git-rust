@@ -33,5 +33,20 @@ fn main() {
                 unreachable!() // clap guarantees exactly one is true
             }
         }
+        Commands::HashObject(args) => {
+            let content = if let Some(path) = &args.path {
+                fs::read_to_string(path).unwrap()
+            } else if args.stdin {
+                cli::read_from_stdin()
+            } else {
+                panic!("Must provide file path or --stdin")
+            };
+
+            if args.write {
+                println!("will hash, show in stdout, and write the file!")
+            } else {
+                println!("will hash and show in stdout!")
+            }
+        }
     }
 }
