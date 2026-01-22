@@ -1,17 +1,17 @@
 use std::fs;
 
-mod cat_file;
+mod blob_object;
 mod cli;
-mod hash_object;
 mod ls_tree;
 mod mode;
+mod object;
 mod tree_entry;
 mod tree_object;
+mod utils;
 
+use crate::{blob_object::BlobObject, object::Object, tree_object::TreeObject};
 use clap::Parser;
 use cli::{Cli, Commands};
-
-use crate::tree_object::TreeObject;
 
 fn main() {
     let cli = Cli::parse();
@@ -26,14 +26,14 @@ fn main() {
         Commands::CatFile(args) => {
             let mode = &args.mode;
 
-            let (object_type, size, content) = cat_file::run(&args.hash);
+            let blob_object = BlobObject::read_db(&args.hash);
 
             if mode.show_type {
-                print!("{object_type}");
+                print!("{}", blob_object.r#type());
             } else if mode.size {
-                print!("{size}");
+                print!("{}", blob_object.size());
             } else if mode.print {
-                print!("{content}");
+                print!("{}", blob_object.0);
             } else if mode.exists {
                 todo!();
             } else {
@@ -49,15 +49,13 @@ fn main() {
                 panic!("Must provide file path or --stdin")
             };
 
-            let store = hash_object::store(&content);
-            let hash = hash_object::hash(&store);
+            let blob_object = BlobObject::new(&content);
 
             if args.write {
-                let compressed_data = hash_object::compress(&store);
-                hash_object::write(&hash, compressed_data);
-                print!("{hash}")
+                blob_object.write_db();
+                print!("{}", blob_object.hashed_store())
             } else {
-                print!("{hash}")
+                print!("{}", blob_object.hashed_store())
             }
         }
         Commands::LsTree(args) => {
