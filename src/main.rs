@@ -67,11 +67,11 @@ fn main() {
             if args.name_only {
                 let names = tree_object.get_names();
                 for name in names {
-                    print!("{name}")
+                    println!("{name}")
                 }
             } else {
                 for entry in tree_object.0 {
-                    print!("{entry}")
+                    println!("{entry}")
                 }
             }
         }
