@@ -1,9 +1,6 @@
 use crate::object::Object;
 use crate::utils;
-use flate2::read::ZlibDecoder;
 use std::fs;
-use std::io::Read;
-use std::path::Path;
 use std::path::PathBuf;
 
 pub struct BlobObject(pub String);
@@ -30,13 +27,8 @@ impl Object for BlobObject {
     }
 
     fn read_db(hash: &str) -> Self {
-        let (dir, file) = hash.split_at(2);
-        let path = Path::new(".git/objects").join(dir).join(file);
-
-        let compressed_store = std::fs::read(path).unwrap();
-        let mut decoder = ZlibDecoder::new(&compressed_store[..]);
-        let mut decompressed_store = String::new();
-        decoder.read_to_string(&mut decompressed_store).unwrap();
+        let compressed_store = utils::file_contents(hash);
+        let decompressed_store = utils::decompress_to_string(compressed_store);
 
         let (_header, content) = decompressed_store.split_once("\0").unwrap();
 

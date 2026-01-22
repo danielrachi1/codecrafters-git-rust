@@ -1,13 +1,34 @@
-use crate::ls_tree;
 use crate::mode::Mode;
+use crate::object::Object;
 use crate::tree_entry::TreeEntry;
+use crate::utils;
 
 pub struct TreeObject(pub Vec<TreeEntry>);
 
-impl TreeObject {
-    pub fn from_hash(hash: &str) -> Self {
-        let file_content = ls_tree::file_contents(hash);
-        let decompressed_data = ls_tree::decompress(file_content);
+impl Object for TreeObject {
+    fn r#type(&self) -> String {
+        "tree".to_string()
+    }
+
+    fn size(&self) -> usize {
+        todo!()
+    }
+
+    fn store(&self) -> String {
+        todo!()
+    }
+
+    fn hashed_store(&self) -> String {
+        todo!()
+    }
+
+    fn compressed_store(&self) -> Vec<u8> {
+        todo!()
+    }
+
+    fn read_db(hash: &str) -> Self {
+        let file_content = utils::file_contents(hash);
+        let decompressed_data = utils::decompress(file_content);
 
         let first_null_idx = decompressed_data.iter().position(|&b| b == b'\0').unwrap();
         let _header = std::str::from_utf8(&decompressed_data[..first_null_idx]).unwrap();
@@ -32,6 +53,12 @@ impl TreeObject {
         Self(entries)
     }
 
+    fn write_db(&self) {
+        todo!()
+    }
+}
+
+impl TreeObject {
     pub fn get_names(&self) -> Vec<&str> {
         let mut names = Vec::new();
         for entry in &self.0 {

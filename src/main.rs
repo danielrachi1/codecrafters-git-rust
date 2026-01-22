@@ -2,7 +2,6 @@ use std::fs;
 
 mod blob_object;
 mod cli;
-mod ls_tree;
 mod mode;
 mod object;
 mod tree_entry;
@@ -60,7 +59,7 @@ fn main() {
         }
         Commands::LsTree(args) => {
             let hash = &args.hash;
-            let tree_object = TreeObject::from_hash(hash);
+            let tree_object = TreeObject::read_db(hash);
 
             if args.name_only {
                 let names = tree_object.get_names();
