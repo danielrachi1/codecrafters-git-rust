@@ -15,6 +15,7 @@ pub enum Commands {
     Init,
     CatFile(CatFileArgs),
     HashObject(HashObjectArgs),
+    LsTree(LsTreeArgs),
 }
 
 #[derive(Args)]
@@ -51,6 +52,14 @@ pub struct HashObjectArgs {
 
     #[arg(long = "stdin", group = "source")]
     pub stdin: bool,
+}
+
+#[derive(Args)]
+pub struct LsTreeArgs {
+    pub hash: String,
+
+    #[arg(long = "name-only")]
+    pub name_only: bool,
 }
 
 pub fn read_from_stdin() -> String {

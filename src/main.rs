@@ -3,9 +3,15 @@ use std::fs;
 mod cat_file;
 mod cli;
 mod hash_object;
+mod ls_tree;
+mod mode;
+mod tree_entry;
+mod tree_object;
 
 use clap::Parser;
 use cli::{Cli, Commands};
+
+use crate::tree_object::TreeObject;
 
 fn main() {
     let cli = Cli::parse();
@@ -52,6 +58,21 @@ fn main() {
                 print!("{hash}")
             } else {
                 print!("{hash}")
+            }
+        }
+        Commands::LsTree(args) => {
+            let hash = &args.hash;
+            let tree_object = TreeObject::from_hash(hash);
+
+            if args.name_only {
+                let names = tree_object.get_names();
+                for name in names {
+                    print!("{name}")
+                }
+            } else {
+                for entry in tree_object.0 {
+                    print!("{entry}")
+                }
             }
         }
     }

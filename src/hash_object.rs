@@ -1,4 +1,4 @@
-use flate2::{write::ZlibEncoder, Compression};
+use flate2::{Compression, write::ZlibEncoder};
 use sha1::{Digest, Sha1};
 use std::path::PathBuf;
 use std::{fs, io::Write};
